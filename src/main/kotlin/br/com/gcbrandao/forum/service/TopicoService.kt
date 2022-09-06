@@ -3,6 +3,7 @@ package br.com.gcbrandao.forum.service
 import br.com.gcbrandao.forum.dto.AtualizacaoTopicoDto
 import br.com.gcbrandao.forum.dto.NovoTopicoDto
 import br.com.gcbrandao.forum.dto.TopicoView
+import br.com.gcbrandao.forum.exception.NotFoundException
 import br.com.gcbrandao.forum.mapper.NovoTopicoDtoMapper
 import br.com.gcbrandao.forum.mapper.TopicoViewMapper
 import br.com.gcbrandao.forum.model.Topico
@@ -16,6 +17,7 @@ class TopicoService(
     private val novoTopicoDtoMapper: NovoTopicoDtoMapper,
     private val topicoViewMapper: TopicoViewMapper
 ) {
+    private val notFoundMessage: String = "Item nao encontrado!!"
     fun listar(): List<TopicoView> {
         return topicos.stream().map { t ->
             topicoViewMapper.map(t)
@@ -25,7 +27,7 @@ class TopicoService(
     fun buscarPorId(id: Long): TopicoView {
         val topico = topicos.stream().filter { t ->
             t.id == id
-        }.findFirst().get()
+        }.findFirst().orElseThrow{NotFoundException(notFoundMessage)}
 
         return topicoViewMapper.map(topico)
     }
@@ -47,7 +49,7 @@ class TopicoService(
     fun apagar(id: Long) {
         val topic = topicos.filter { t ->
             t.id == id
-        }.firstOrNull(). :? throw NotFoundException()
+        }.stream().findFirst().orElseThrow{ NotFoundException(notFoundMessage)}
         val minusTopic = topicos.minus(topic)
     }
 }
