@@ -8,6 +8,7 @@ import br.com.gcbrandao.forum.model.Topico
 import br.com.gcbrandao.forum.model.Usuario
 import br.com.gcbrandao.forum.service.TopicoService
 import org.springframework.http.ResponseEntity
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -36,6 +37,7 @@ class TopicoController(private val service: TopicoService) {
     }
 
     @PostMapping
+    @Transactional
     fun cadastrar( @RequestBody @Valid dto: NovoTopicoDto,
     uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<TopicoView> {
         println("entrei na controller")
@@ -49,11 +51,13 @@ class TopicoController(private val service: TopicoService) {
     }
 
     @PutMapping
+    @Transactional
     fun atualizar(@RequestBody @Valid dto: AtualizacaoTopicoDto){
         service.atualizar(dto)
     }
 
     @DeleteMapping
+    @Transactional
     fun deletar(@PathVariable id: Long){
         service.apagar(id)
     }

@@ -7,49 +7,50 @@ import br.com.gcbrandao.forum.exception.NotFoundException
 import br.com.gcbrandao.forum.mapper.NovoTopicoDtoMapper
 import br.com.gcbrandao.forum.mapper.TopicoViewMapper
 import br.com.gcbrandao.forum.model.Topico
+import br.com.gcbrandao.forum.repository.TopicoRepository
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import java.util.stream.Collectors
 
 @Service
 class TopicoService(
-    private var topicos: List<Topico> = ArrayList(),
+    private val topicoRepository: TopicoRepository,
     private val novoTopicoDtoMapper: NovoTopicoDtoMapper,
     private val topicoViewMapper: TopicoViewMapper
 ) {
     private val notFoundMessage: String = "Item nao encontrado!!"
     fun listar(): List<TopicoView> {
-        return topicos.stream().map { t ->
+        return topicoRepository.findAll().stream().map { t ->
             topicoViewMapper.map(t)
         }.collect(Collectors.toList())
     }
 
     fun buscarPorId(id: Long): TopicoView {
-        val topico = topicos.stream().filter { t ->
-            t.id == id
-        }.findFirst().orElseThrow{NotFoundException(notFoundMessage)}
+        val topico = topicoRepository
+            .findById(id).orElseThrow{NotFoundException(notFoundMessage)}
 
         return topicoViewMapper.map(topico)
     }
 
     fun cadastrar(dto: NovoTopicoDto): TopicoView  {
 
-        val topico = novoTopicoDtoMapper.map(dto)
-        topico.id = topicos.size.toLong() + 1
-
-        topicos = topicos.plus(topico)
-
+        val topico = topicoRepository.save(novoTopicoDtoMapper.map(dto))
         return topicoViewMapper.map(topico)
     }
 
     fun atualizar(dto: AtualizacaoTopicoDto) {
-        topicos.plus(dto)
+        var topico = topicoRepository.findById(dto.id).orElseThrow {
+            NotFoundException("Topico Não encontrado")
+        }
+
+        topico.mensagem = dto.mensagem
+        topico.titulo = dto.titulo
+
+        topicoRepository.saveAndFlush(topico)
     }
 
     fun apagar(id: Long) {
-        val topic = topicos.filter { t ->
-            t.id == id
-        }.stream().findFirst().orElseThrow{ NotFoundException(notFoundMessage)}
-        val minusTopic = topicos.minus(topic)
+
+        topicoRepository.deleteById(id)
     }
 }
