@@ -7,6 +7,8 @@ import br.com.gcbrandao.forum.model.Curso
 import br.com.gcbrandao.forum.model.Topico
 import br.com.gcbrandao.forum.model.Usuario
 import br.com.gcbrandao.forum.service.TopicoService
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -32,6 +34,7 @@ import javax.validation.Valid
 class TopicoController(private val service: TopicoService) {
 
     @GetMapping
+    @Cacheable("topicos")
 
     fun listar(
         @RequestParam(required = false) nomeCurso: String?,
@@ -47,6 +50,7 @@ class TopicoController(private val service: TopicoService) {
 
     @PostMapping
     @Transactional
+    @CacheEvict(value = ["topicos"], allEntries = true)
     fun cadastrar(
         @RequestBody @Valid dto: NovoTopicoDto,
         uriComponentsBuilder: UriComponentsBuilder
@@ -63,12 +67,14 @@ class TopicoController(private val service: TopicoService) {
 
     @PutMapping
     @Transactional
+    @CacheEvict(value = ["topicos"], allEntries = true)
     fun atualizar(@RequestBody @Valid dto: AtualizacaoTopicoDto) {
         service.atualizar(dto)
     }
 
     @DeleteMapping
     @Transactional
+    @CacheEvict(value = ["topicos"], allEntries = true)
     fun deletar(@PathVariable id: Long) {
         service.apagar(id)
     }
