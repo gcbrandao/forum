@@ -7,6 +7,10 @@ import br.com.gcbrandao.forum.model.Curso
 import br.com.gcbrandao.forum.model.Topico
 import br.com.gcbrandao.forum.model.Usuario
 import br.com.gcbrandao.forum.service.TopicoService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -28,19 +32,25 @@ import javax.validation.Valid
 class TopicoController(private val service: TopicoService) {
 
     @GetMapping
-    fun listar(@RequestParam(required = false) nomeCurso: String?): List<TopicoView>{
-        return service.listar(nomeCurso)
+
+    fun listar(
+        @RequestParam(required = false) nomeCurso: String?,
+        @PageableDefault(size = 5, sort = ["dataCriacao"], direction = Sort.Direction.DESC) paginacao: Pageable
+    ): Page<TopicoView> {
+        return service.listar(nomeCurso, paginacao)
     }
 
     @GetMapping("/{id}")
-    fun buscarPorId(@PathVariable  id: Long): TopicoView{
+    fun buscarPorId(@PathVariable id: Long): TopicoView {
         return service.buscarPorId(id)
     }
 
     @PostMapping
     @Transactional
-    fun cadastrar( @RequestBody @Valid dto: NovoTopicoDto,
-    uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<TopicoView> {
+    fun cadastrar(
+        @RequestBody @Valid dto: NovoTopicoDto,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): ResponseEntity<TopicoView> {
         println("entrei na controller")
         val topicoDtoRet = service.cadastrar(dto)
 
@@ -53,13 +63,13 @@ class TopicoController(private val service: TopicoService) {
 
     @PutMapping
     @Transactional
-    fun atualizar(@RequestBody @Valid dto: AtualizacaoTopicoDto){
+    fun atualizar(@RequestBody @Valid dto: AtualizacaoTopicoDto) {
         service.atualizar(dto)
     }
 
     @DeleteMapping
     @Transactional
-    fun deletar(@PathVariable id: Long){
+    fun deletar(@PathVariable id: Long) {
         service.apagar(id)
     }
 }

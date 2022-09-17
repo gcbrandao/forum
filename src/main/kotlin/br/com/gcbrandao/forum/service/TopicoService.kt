@@ -8,6 +8,8 @@ import br.com.gcbrandao.forum.mapper.NovoTopicoDtoMapper
 import br.com.gcbrandao.forum.mapper.TopicoViewMapper
 import br.com.gcbrandao.forum.model.Topico
 import br.com.gcbrandao.forum.repository.TopicoRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import java.util.stream.Collectors
@@ -19,25 +21,28 @@ class TopicoService(
     private val topicoViewMapper: TopicoViewMapper
 ) {
     private val notFoundMessage: String = "Item nao encontrado!!"
-    fun listar(nomeCurso: String?): List<TopicoView> {
-        val topicos = if (nomeCurso == null){
-            topicoRepository.findAll()
+    fun listar(
+        nomeCurso: String?,
+        paginacao: Pageable
+    ): Page<TopicoView> {
+        val topicos = if (nomeCurso == null) {
+            topicoRepository.findAll(paginacao)
         } else {
-            topicoRepository.findByCursoNome(nomeCurso)
+            topicoRepository.findByCursoNome(nomeCurso, paginacao)
         }
-        return topicoRepository.findAll().stream().map { t ->
+        return topicos.map { t ->
             topicoViewMapper.map(t)
-        }.collect(Collectors.toList())
+        }
     }
 
     fun buscarPorId(id: Long): TopicoView {
         val topico = topicoRepository
-            .findById(id).orElseThrow{NotFoundException(notFoundMessage)}
+            .findById(id).orElseThrow { NotFoundException(notFoundMessage) }
 
         return topicoViewMapper.map(topico)
     }
 
-    fun cadastrar(dto: NovoTopicoDto): TopicoView  {
+    fun cadastrar(dto: NovoTopicoDto): TopicoView {
 
         val topico = topicoRepository.save(novoTopicoDtoMapper.map(dto))
         return topicoViewMapper.map(topico)
