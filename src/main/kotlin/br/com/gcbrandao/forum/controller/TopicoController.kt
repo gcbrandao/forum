@@ -2,6 +2,7 @@ package br.com.gcbrandao.forum.controller
 
 import br.com.gcbrandao.forum.dto.AtualizacaoTopicoDto
 import br.com.gcbrandao.forum.dto.NovoTopicoDto
+import br.com.gcbrandao.forum.dto.TopicoPorCategoria
 import br.com.gcbrandao.forum.dto.TopicoView
 import br.com.gcbrandao.forum.model.Curso
 import br.com.gcbrandao.forum.model.Topico
@@ -28,6 +29,7 @@ import org.springframework.web.util.UriBuilder
 import org.springframework.web.util.UriComponentsBuilder
 import java.util.*
 import javax.validation.Valid
+import kotlin.collections.List
 
 @RestController
 @RequestMapping("/topicos")
@@ -77,5 +79,13 @@ class TopicoController(private val service: TopicoService) {
     @CacheEvict(value = ["topicos"], allEntries = true)
     fun deletar(@PathVariable id: Long) {
         service.apagar(id)
+    }
+
+    @GetMapping("/relatorio")
+    fun relatorio(): ResponseEntity<List<TopicoPorCategoria>> {
+        print(service.relatorio())
+        val relatorio = service.relatorio()
+
+        return ResponseEntity.ok(relatorio)
     }
 }

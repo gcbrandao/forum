@@ -2,6 +2,7 @@ package br.com.gcbrandao.forum.service
 
 import br.com.gcbrandao.forum.dto.AtualizacaoTopicoDto
 import br.com.gcbrandao.forum.dto.NovoTopicoDto
+import br.com.gcbrandao.forum.dto.TopicoPorCategoria
 import br.com.gcbrandao.forum.dto.TopicoView
 import br.com.gcbrandao.forum.exception.NotFoundException
 import br.com.gcbrandao.forum.mapper.NovoTopicoDtoMapper
@@ -62,5 +63,9 @@ class TopicoService(
     fun apagar(id: Long) {
 
         topicoRepository.deleteById(id)
+    }
+
+    fun relatorio(): List<TopicoPorCategoria> {
+        return topicoRepository.relatorio()
     }
 }
