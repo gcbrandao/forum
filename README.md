@@ -17,5 +17,17 @@ heroku container:push web
 
 heroku container:release web
 
+***************
+
+docker pull mysql:8.0.28
+
+docker run -d -p 3306:3306 --name mysql-container -e MYSQL_ROOT_PASSWORD=root -e MYSQL_PASSWORD=root mysql:8.0.28
+
+docker exec -it mysql-container bash
+
+mysql -u root -p
+
+create database forum;
+
 
 

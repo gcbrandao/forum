@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 import java.util.stream.Collectors
 
 @Service
@@ -56,6 +57,7 @@ class TopicoService(
 
         topico.mensagem = dto.mensagem
         topico.titulo = dto.titulo
+        topico.dataAlteracao = LocalDateTime.now()
 
         topicoRepository.saveAndFlush(topico)
     }
