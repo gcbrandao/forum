@@ -6,7 +6,6 @@ import javax.validation.constraints.NotNull
 data class AtualizacaoTopicoDto(
 
     @field:NotNull
-    @field:NotEmpty
     val id: Long,
 
     @field:NotNull
