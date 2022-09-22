@@ -9,6 +9,8 @@ import br.com.gcbrandao.forum.mapper.NovoTopicoDtoMapper
 import br.com.gcbrandao.forum.mapper.TopicoViewMapper
 import br.com.gcbrandao.forum.model.Topico
 import br.com.gcbrandao.forum.repository.TopicoRepository
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
@@ -23,6 +25,8 @@ class TopicoService(
     private val topicoViewMapper: TopicoViewMapper
 ) {
     private val notFoundMessage: String = "Item nao encontrado!!"
+
+    @Cacheable(cacheNames = ["topicos"], key = "#root.method.name")
     fun listar(
         nomeCurso: String?,
         paginacao: Pageable
@@ -44,12 +48,14 @@ class TopicoService(
         return topicoViewMapper.map(topico)
     }
 
+    @CacheEvict(cacheNames = ["topicos"], allEntries = true)
     fun cadastrar(dto: NovoTopicoDto): TopicoView {
 
         val topico = topicoRepository.save(novoTopicoDtoMapper.map(dto))
         return topicoViewMapper.map(topico)
     }
 
+    @CacheEvict(cacheNames = ["topicos"], allEntries = true)
     fun atualizar(dto: AtualizacaoTopicoDto) {
         var topico = topicoRepository.findById(dto.id).orElseThrow {
             NotFoundException("Topico Não encontrado")
@@ -62,6 +68,7 @@ class TopicoService(
         topicoRepository.saveAndFlush(topico)
     }
 
+    @CacheEvict(cacheNames = ["topicos"], allEntries = true)
     fun apagar(id: Long) {
 
         topicoRepository.deleteById(id)

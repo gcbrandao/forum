@@ -1,6 +1,8 @@
 package br.com.gcbrandao.forum.dto
 
+import java.io.Serializable
 import java.time.LocalDateTime
+
 
 data class TopicoView(
     val id: Long?,
@@ -9,4 +11,4 @@ data class TopicoView(
     val status: String,
     val dataCriacao: LocalDateTime,
     val dataAlteracao: LocalDateTime?
-)
+) : Serializable
