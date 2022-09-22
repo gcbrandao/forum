@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query
 
 interface TopicoRepository : JpaRepository<Topico, Long> {
 
-    fun findByCursoNome(nomeCurso: String, pagiancao: Pageable): Page<Topico>
+    fun findByCursoNome(nomeCurso: String, paginacao: Pageable): Page<Topico>
 
     @Query("select new br.com.gcbrandao.forum.dto.TopicoPorCategoria(curso.categoria, count(t)) " +
             "FROM Topico t JOIN t.curso curso GROUP BY   curso.categoria ")
