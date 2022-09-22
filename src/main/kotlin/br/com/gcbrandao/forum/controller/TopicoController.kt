@@ -39,8 +39,6 @@ import kotlin.collections.List
 class TopicoController(private val service: TopicoService) {
 
     @GetMapping
-    @Cacheable("topicos")
-
     fun listar(
         @RequestParam(required = false) nomeCurso: String?,
         @PageableDefault(size = 5, sort = ["dataCriacao"], direction = Sort.Direction.DESC) paginacao: Pageable
@@ -55,12 +53,10 @@ class TopicoController(private val service: TopicoService) {
 
     @PostMapping
     @Transactional
-    @CacheEvict(value = ["topicos"], allEntries = true)
     fun cadastrar(
         @RequestBody @Valid dto: NovoTopicoDto,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<TopicoView> {
-        println("entrei na controller")
         val topicoDtoRet = service.cadastrar(dto)
 
         val toUri = uriComponentsBuilder.path("/topicos/${topicoDtoRet.id}")
@@ -72,14 +68,12 @@ class TopicoController(private val service: TopicoService) {
 
     @PutMapping
     @Transactional
-    @CacheEvict(value = ["topicos"], allEntries = true)
     fun atualizar(@RequestBody @Valid dto: AtualizacaoTopicoDto) {
         service.atualizar(dto)
     }
 
     @DeleteMapping
     @Transactional
-    @CacheEvict(value = ["topicos"], allEntries = true)
     fun deletar(@PathVariable id: Long) {
         service.apagar(id)
     }

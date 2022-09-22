@@ -33,3 +33,22 @@ create database forum;
 Swagger:
 
 http://localhost:8080/swagger-ui/index.html
+
+**************
+
+docker pull redis:latest
+
+docker run --name redis-local redis:latest
+
+docker exec -it redis sh
+
+redis-cli
+
+monitor
+
+***************
+
+https://mailtrap.io/
+
+
+
